@@ -1,0 +1,62 @@
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.net {
+    height: 100%;
+    margin: 0;
+}
+
+.node {
+    stroke: rgba(3, 52, 92, .7);
+    stroke-width: 3px;
+    -webkit-transition: fill .5s ease;
+    transition: fill .5s ease;
+    fill: #BBDEFB;
+}
+
+.node.selected {
+    stroke: rgba(202, 165, 85, 0.5);
+}
+
+.node.pinned {
+    stroke: rgba(202, 165, 85, 1);
+}
+
+.link {
+    stroke: rgba(0,0,0,.2);
+}
+
+.link, .node {
+    stroke-linecap: round;
+}
+
+.link:hover, .node:hover {
+    stroke: rgba(240, 183, 59, 0.6);
+    stroke-width: 5px;
+}
+
+.link.selected {
+    fill: rgba(240, 183, 59, 0.6);
+    /* stroke: rgba(202,164,85,.6); */
+}
+
+.curve {
+    fill: none;
+}
+
+.link-label, .node-label {
+    fill: rgba(0,0,0,.7);
+}
+
+.link-label {
+    -webkit-transform: translateY(-.5em);
+    transform: translateY(.5em);
+    text-anchor: middle;
+}
+
+.derived {
+    font-weight: 900;
+}

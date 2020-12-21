@@ -1,0 +1,47 @@
+FROM gcr.io/google-appengine/python
+RUN apt-get update
+RUN apt-get install -y unzip openjdk-8-jre
+
+# Chromium & chromedriver setting
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
+RUN echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get -y update
+# RUN apt-get -y install google-chrome-stable
+RUN apt-get install -y chromium-browser chromium-chromedriver
+RUN chmod a+x /usr/lib/chromium-browser/chromedriver
+
+# RUN wget http://chromedriver.storage.googleapis.com/77.0.3865.40/chromedriver_linux64.zip
+# RUN unzip chromedriver_linux64.zip
+# RUN mv chromedriver /usr/bin
+# RUN cd /usr/bin
+# RUN chmod a+x chromedriver
+# RUN ./chromedriver &
+# RUN cd ~
+
+# Python setting
+LABEL python_version=python
+RUN virtualenv --no-download /env -p python3.7
+ENV VIRTUAL_ENV /env
+ENV PATH /env/bin:$PATH
+ADD requirements.txt /app/
+RUN pip3 install Cython
+RUN pip install -r requirements.txt
+
+# Mecab-ko install
+RUN ["/bin/bash", "-c", "bash < <(curl -s https://raw.githubusercontent.com/konlpy/konlpy/master/scripts/mecab.sh)"]
+# RUN python /tmp/mecab-python-0.996/setup.py build
+# RUN python /tmp/mecab-python-0.996/setup.py install
+
+# Nltk download
+RUN python -m nltk.downloader punkt
+RUN python -m nltk.downloader averaged_perceptron_tagger
+
+# Avoid JPype UserWarning
+RUN pip uninstall -y JPype1
+RUN pip install JPype1==0.6.3
+
+ADD . /app/
+# RUN chmod a+x /home/vmagent/app/chromedriver/chromedriver
+
+# Start gunicorn
+CMD exec gunicorn -b :$PORT main:app --timeout 3600
